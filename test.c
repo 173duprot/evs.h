@@ -23,20 +23,20 @@ void on_collision(void *ctx, void *data) {
 }
 
 int main() {
-    ECS_t ecs;
-    init_ecs(&ecs);
-
     evs_t evs;
+    ecs_t ecs = {0};
+
     evs_init(&evs);
 
-    // Register event handlers
-    evs_add_hdl(&evs, 1, on_frame);
-    evs_add_hdl(&evs, 2, on_position);
-    evs_add_hdl(&evs, 3, on_collision);
+    // Subscribe <event_id> to <func>
+    evs_subscribe(&evs, 1, on_frame);
+    evs_subscribe(&evs, 1, on_position);
+    evs_subscribe(&evs, 2, on_position);
+    evs_subscribe(&evs, 3, on_collision);
 
     // Create entities
     for (int i = 0; i < NUM_ENT; ++i) {
-        create(&ecs);
+        create_ent(&ecs);
     }
 
     // Start time for the test
@@ -49,7 +49,7 @@ int main() {
             for (int j = 0; j < EVT_TYPES; ++j) {
                 for (int k = 0; k < NUM_ENT; ++k) {
                     // Emit different events
-                    evs_trigger(&evs, j + 1, &ecs, &ecs.data[0][k]);
+                    ev_trigger(&evs, j + 1, &ecs, &ecs.data[0][k]);
                     evt_count++;
                 }
             }
